@@ -6,7 +6,7 @@ The product website for **ChatGPT Speak** — intelligence that lives with you.
 
 - **Multi-page structure** — each top tab is its own page: Overview, Conversation, Memory, Actions, Everyday, Home, Work, Privacy, Design — with Previous/Next pagination between them
 - **Full-bleed hero** — edge-to-edge product photography with the navigation tabs integrated over it; the nav gains a blurred glass background on scroll; tab pages get their own cinematic page heroes
-- **Editorial design system** — dark luxury palette, self-hosted Cormorant Garamond display serif paired with Jost, amber and glow accents, chat-style dialogue vignettes, quote pills, contrast pairs, and a CSS-drawn device ring with a pulsing light
+- **Editorial design system** — light, high-contrast palette in a clean ChatGPT-inspired style with dark cinematic photography heroes, self-hosted Cormorant Garamond display serif paired with Jost, amber and glow accents, chat-style dialogue vignettes, quote pills, contrast pairs, and a CSS-drawn device ring with a pulsing light
 - **Complete product narrative** — every section of the launch copy: conversation, household memory, multi-user permissions, actions and agents, kitchen, travel, family, smart home, work, spatial awareness, privacy, language, hardware design, and the closing "Don't open AI. Live with it."
 - **Scroll-reveal animations** — respectful of `prefers-reduced-motion`
 - **Responsive** — from phones to large desktop displays
