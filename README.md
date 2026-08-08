@@ -27,4 +27,6 @@ Then visit http://localhost:8000.
 - `assets/css/style.css` — the design system
 - `assets/js/site.js` — nav, mobile menu, scroll-reveal
 - `assets/fonts/` — self-hosted Cormorant Garamond and Jost (variable woff2)
-- `assets/hero.jpg` — web-optimized hero photograph (`assets/hero-original.png` is the full-resolution original)
+- `assets/hero-device.jpg` — studio render of the device used in the Overview hero (`assets/device-studio-original.png` is the original)
+- `assets/hero.jpg` — dark lifestyle photograph used for page heroes and the closing (`assets/hero-original.png` is the original)
+- `assets/carry.jpg`, `clip.jpg`, `place.jpg`, `dock.jpg` — lifestyle panels on the Design page, cropped from `assets/product-sheet.png`

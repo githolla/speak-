@@ -136,6 +136,14 @@ h1, h2, h3, .serif {
   transition: color 0.3s;
 }
 .nav.scrolled .nav-toggle { color: var(--ink); }
+
+/* Pages that open on a light hero start with dark nav text */
+.nav.light .nav-brand { color: var(--ink); }
+.nav.light .nav-brand em { color: var(--ink-dim); }
+.nav.light .nav-tabs a { color: var(--ink-dim); }
+.nav.light .nav-tabs a:hover { color: var(--ink); }
+.nav.light .nav-tabs a.active { color: var(--ink); background: rgba(26, 24, 21, 0.07); }
+.nav.light .nav-toggle { color: var(--ink); }
 .nav-toggle svg { width: 22px; height: 22px; display: block; }
 
 @media (max-width: 1220px) {
@@ -170,70 +178,71 @@ h1, h2, h3, .serif {
   .nav-toggle { display: block; }
 }
 
-/* ═══ Full hero (overview page) ════════════ */
-.hero {
+/* ═══ Product hero (overview page) ═════════ */
+/* Light hero built around the studio render: its background is the
+   section background, so the device sits seamlessly in the page. */
+.product-hero {
   position: relative;
-  height: 100svh;
-  min-height: 620px;
-  width: 100%;
-  overflow: hidden;
+  min-height: 100svh;
   display: flex;
-  align-items: flex-end;
-  background: #0d0c0b;
+  align-items: center;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 68% 42%, #f6f0ee 0%, #ede6e3 55%, #e2dad6 100%);
+  padding: 110px var(--pad) 56px;
 }
-.hero img {
-  position: absolute;
-  inset: 0;
+.product-hero .hero-grid {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 55%;
-  transform: scale(1.06);
-  animation: heroDrift 22s ease-out forwards;
-}
-@keyframes heroDrift { to { transform: scale(1); } }
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background:
-    linear-gradient(to bottom, rgba(13,12,11,0.5) 0%, rgba(13,12,11,0) 24%),
-    linear-gradient(to top, rgba(13,12,11,0.82) 0%, rgba(13,12,11,0.3) 36%, rgba(13,12,11,0) 60%);
-}
-.hero-content {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  padding: 0 var(--pad) clamp(64px, 10vh, 120px);
-  max-width: 1280px;
+  max-width: 1220px;
   margin: 0 auto;
-  color: var(--photo-ink);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
 }
-.hero-content .kicker { color: #dcb277; }
-.hero h1 {
-  font-size: clamp(48px, 7vw, 104px);
-  font-weight: 400;
-  margin-bottom: 28px;
-  color: #fbf8f3;
+.product-hero .kicker { color: var(--bronze); }
+.product-hero h1 {
+  font-size: clamp(44px, 5.4vw, 82px);
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 14px;
 }
 .nw { white-space: nowrap; }
+.hero-tagline {
+  display: block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(20px, 2vw, 26px);
+  color: var(--bronze);
+  margin-bottom: 24px;
+}
 .hero-sub {
-  max-width: 580px;
-  font-size: clamp(16px, 1.6vw, 19px);
-  color: var(--photo-dim);
+  max-width: 540px;
+  font-size: clamp(15.5px, 1.5vw, 18px);
+  color: var(--ink-dim);
   line-height: 1.75;
 }
-.hero-sub strong { color: #fbf8f3; font-weight: 400; }
+.hero-sub strong { color: var(--ink); font-weight: 400; }
+.hero-product {
+  margin: 0;
+  justify-self: end;
+  width: min(100%, 600px);
+}
+.hero-product img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-mask-image: radial-gradient(72% 72% at 50% 50%, #000 52%, transparent 90%);
+  mask-image: radial-gradient(72% 72% at 50% 50%, #000 52%, transparent 90%);
+}
 .hero-scroll {
   position: absolute;
-  bottom: 28px;
+  bottom: 26px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
   width: 1px;
   height: 44px;
-  background: linear-gradient(to bottom, transparent, rgba(251,248,243,0.7));
+  background: linear-gradient(to bottom, transparent, rgba(26, 24, 21, 0.45));
   animation: scrollHint 2.4s ease-in-out infinite;
 }
 @keyframes scrollHint {
@@ -241,49 +250,37 @@ h1, h2, h3, .serif {
   50% { opacity: 1; transform: translateX(-50%) scaleY(1); }
 }
 
-/* Mobile: title and tagline crown the photo; the product owns the frame. */
-.hero-tagline { display: none; }
+/* Mobile: title and tagline above, the product below, exactly centered. */
 .hero-intro { display: none; }
-@media (max-width: 768px) {
-  .hero {
-    height: 92svh;
-    min-height: 520px;
+@media (max-width: 880px) {
+  .product-hero {
+    min-height: 88svh;
+    padding: 104px 20px 64px;
     align-items: flex-start;
   }
-  .hero-scroll { display: none; }
-  .hero::before {
-    background:
-      linear-gradient(to bottom, rgba(13,12,11,0.78) 0%, rgba(13,12,11,0.35) 26%, rgba(13,12,11,0) 44%),
-      linear-gradient(to top, rgba(13,12,11,0.3) 0%, rgba(13,12,11,0) 22%);
-  }
-  .hero img { object-position: 52% 66%; }
-  .hero-content {
-    padding: 100px 24px 0;
+  .product-hero .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
-  .hero-content .kicker {
-    margin-bottom: 14px;
-    color: #dcb277;
+  .product-hero .kicker { margin-bottom: 14px; }
+  .product-hero h1 {
+    font-size: clamp(32px, 8.8vw, 44px);
+    margin-bottom: 10px;
   }
-  .hero h1 {
-    font-size: clamp(30px, 8.4vw, 42px);
-    font-weight: 500;
-    margin-bottom: 12px;
-  }
-  .hero-content .hero-sub { display: none; }
   .hero-tagline {
-    display: block;
-    font-family: var(--serif);
-    font-style: italic;
     font-size: 21px;
-    color: rgba(251, 248, 243, 0.85);
+    margin-bottom: 8px;
+  }
+  .product-hero .hero-copy .hero-sub { display: none; }
+  .hero-product {
+    width: min(92%, 470px);
+    margin: 0 auto;
+    justify-self: center;
   }
   .hero-intro {
     display: block;
-    padding: clamp(48px, 8vh, 72px) var(--pad) 8px;
+    padding: clamp(40px, 7vh, 64px) var(--pad) 8px;
     text-align: center;
   }
   .hero-intro .hero-sub {
@@ -663,6 +660,24 @@ h2 {
   font-style: italic;
   color: var(--ink);
   font-size: 25px;
+}
+
+/* Lifestyle panel grid (design page) */
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin-top: 56px;
+  max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.panel-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
 }
 
 /* Wall of sayings */
