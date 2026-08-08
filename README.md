@@ -27,6 +27,8 @@ Then visit http://localhost:8000.
 - `assets/css/style.css` — the design system
 - `assets/js/site.js` — nav, mobile menu, scroll-reveal
 - `assets/fonts/` — self-hosted Cormorant Garamond and Jost (variable woff2)
-- `assets/hero-coast.jpg` — coastal sunset render used for every hero and the closing (`assets/hero-coast-original.png` is the original)
+- `assets/hero-coast.jpg` — coastal deck render: Overview hero, closing, and the Actions/Work/Design page heroes (`assets/hero-coast-original.png` is the original)
+- `assets/hero-dining.jpg` — dining-room render: Conversation, Memory, Everyday, and Home page heroes (`assets/hero-dining-original.png` is the original)
+- `assets/hero-bath.jpg` — bathroom render: Privacy page hero (`assets/hero-bath-original.png` is the original)
 - `assets/hero-device.jpg` — studio render of the device (`assets/device-studio-original.png` is the original)
 - `assets/carry.jpg`, `clip.jpg`, `place.jpg`, `dock.jpg`, `features-strip.jpg`, `exploded.jpg`, `dimensions.jpg`, `how-it-works.jpg`, `finishes.jpg`, `included.jpg` — Design-page panels cropped from `assets/product-sheet.png`
