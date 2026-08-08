@@ -29,4 +29,4 @@ Then visit http://localhost:8000.
 - `assets/fonts/` — self-hosted Cormorant Garamond and Jost (variable woff2)
 - `assets/hero-coast.jpg` — coastal sunset render used for every hero and the closing (`assets/hero-coast-original.png` is the original)
 - `assets/hero-device.jpg` — studio render of the device (`assets/device-studio-original.png` is the original)
-- `assets/carry.jpg`, `clip.jpg`, `place.jpg`, `dock.jpg` — lifestyle panels on the Design page, cropped from `assets/product-sheet.png`
+- `assets/carry.jpg`, `clip.jpg`, `place.jpg`, `dock.jpg`, `features-strip.jpg`, `exploded.jpg`, `dimensions.jpg`, `how-it-works.jpg`, `finishes.jpg`, `included.jpg` — Design-page panels cropped from `assets/product-sheet.png`
