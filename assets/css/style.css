@@ -864,6 +864,14 @@ footer .credit a:hover {
   color: var(--ink);
   border-bottom-color: var(--ink);
 }
+footer .credit a.admin-link {
+  color: var(--muted);
+  border-bottom-color: rgba(138, 132, 123, 0.35);
+}
+footer .credit a.admin-link:hover {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
 
 /* Newsletter signup */
 .news-form {
