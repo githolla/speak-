@@ -3,621 +3,1565 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChatGPTSpeak</title>
-<meta name="description" content="ChatGPTSpeak — talk with AI in a familiar chat interface.">
+<title>ChatGPT Speak — Intelligence that lives with you</title>
+<meta name="description" content="ChatGPT Speak isn't a smart speaker. It's ChatGPT given a place in the physical world. Don't open AI. Live with it.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%23e8e3da' stroke-width='5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,340;9..144,400;9..144,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-main: #ffffff;
-    --bg-sidebar: #f9f9f9;
-    --bg-input: #f4f4f4;
-    --bg-hover: #ececec;
-    --bg-user-bubble: #e8e8e8;
-    --text-main: #0d0d0d;
-    --text-secondary: #5d5d5d;
-    --border: #e3e3e3;
-    --accent: #0d0d0d;
-    --sidebar-width: 260px;
+    --bg: #0a0a0b;
+    --bg-soft: #101012;
+    --bg-card: #141416;
+    --ink: #f2ede4;
+    --ink-dim: #b9b2a6;
+    --muted: #837c70;
+    --line: rgba(242, 237, 228, 0.1);
+    --amber: #d3a86a;
+    --glow: #a8d8f0;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Inter", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --pad: clamp(20px, 5vw, 64px);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html, body {
-    height: 100%;
-    font-family: "Söhne", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg-main);
-    color: var(--text-main);
-    overflow: hidden;
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
-  .app {
-    display: flex;
-    height: 100dvh;
-    width: 100%;
+  ::selection { background: rgba(211, 168, 106, 0.3); }
+
+  h1, h2, h3, .serif {
+    font-family: var(--serif);
+    font-weight: 340;
+    letter-spacing: -0.01em;
+    line-height: 1.12;
   }
 
-  /* ── Sidebar ─────────────────────────────── */
-  .sidebar {
-    width: var(--sidebar-width);
-    min-width: var(--sidebar-width);
-    background: var(--bg-sidebar);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    transition: margin-left 0.25s ease;
-    z-index: 20;
-  }
-  .sidebar.collapsed { margin-left: calc(-1 * var(--sidebar-width)); }
-
-  .sidebar-header {
+  /* ═══ Navigation ═══════════════════════════ */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px;
+    padding: 0 var(--pad);
+    height: 68px;
+    transition: background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease;
+    border-bottom: 1px solid transparent;
   }
-
-  .icon-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 10px;
-    background: transparent;
-    color: var(--text-main);
-    cursor: pointer;
+  .nav.scrolled {
+    background: rgba(10, 10, 11, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom-color: var(--line);
   }
-  .icon-btn:hover { background: var(--bg-hover); }
-  .icon-btn svg { width: 20px; height: 20px; }
-
-  .new-chat-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0 12px 8px;
-    padding: 10px 12px;
-    border: none;
-    border-radius: 10px;
-    background: transparent;
-    color: var(--text-main);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: left;
-  }
-  .new-chat-btn:hover { background: var(--bg-hover); }
-  .new-chat-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-  .sidebar-section-label {
-    padding: 16px 20px 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-
-  .chat-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 12px;
-  }
-  .chat-list-item {
-    display: block;
-    width: 100%;
-    padding: 10px 12px;
-    border: none;
-    border-radius: 10px;
-    background: transparent;
-    color: var(--text-main);
-    font-size: 14px;
-    text-align: left;
-    cursor: pointer;
+  .nav-brand {
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 400;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: 0.01em;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
-  .chat-list-item:hover, .chat-list-item.active { background: var(--bg-hover); }
-
-  .sidebar-footer {
-    border-top: 1px solid var(--border);
-    padding: 12px;
-  }
-  .profile-btn {
+  .nav-brand em { font-style: italic; font-weight: 340; color: var(--ink-dim); }
+  .nav-tabs {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 8px 10px;
-    border: none;
-    border-radius: 10px;
-    background: transparent;
-    font-size: 14px;
-    color: var(--text-main);
-    cursor: pointer;
-    text-align: left;
+    gap: 4px;
   }
-  .profile-btn:hover { background: var(--bg-hover); }
-  .avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #19c37d, #0fa47f);
-    color: #fff;
+  .nav-tabs a {
     font-size: 13px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--ink-dim);
+    text-decoration: none;
+    padding: 7px 13px;
+    border-radius: 100px;
+    transition: color 0.25s, background 0.25s;
+    white-space: nowrap;
   }
-
-  /* ── Main area ───────────────────────────── */
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    position: relative;
+  .nav-tabs a:hover { color: var(--ink); }
+  .nav-tabs a.active {
+    color: var(--ink);
+    background: rgba(242, 237, 228, 0.08);
   }
-
-  .topbar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    min-height: 56px;
-  }
-  .topbar .icon-btn.open-sidebar { display: none; }
-  .sidebar.collapsed ~ .main .icon-btn.open-sidebar,
-  .app.sidebar-hidden .icon-btn.open-sidebar { display: flex; }
-
-  .brand {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--text-main);
-  }
-  .brand span { color: var(--text-secondary); font-weight: 400; }
-
-  /* ── Chat area ───────────────────────────── */
-  .chat-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-  }
-
-  .messages {
-    flex: 1;
-    width: 100%;
-    overflow-y: auto;
+  .nav-toggle {
     display: none;
-    scroll-behavior: smooth;
+    background: none;
+    border: none;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 8px;
   }
-  .messages-inner {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 24px 16px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  .nav-toggle svg { width: 22px; height: 22px; display: block; }
+
+  @media (max-width: 1080px) {
+    .nav-tabs {
+      position: fixed;
+      top: 68px; left: 0; right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: rgba(10, 10, 11, 0.96);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--line);
+      padding: 12px var(--pad) 24px;
+      transform: translateY(-8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .nav-tabs.open { opacity: 1; transform: none; pointer-events: auto; }
+    .nav-tabs a { padding: 13px 8px; font-size: 15px; border-radius: 0; border-bottom: 1px solid rgba(242,237,228,0.05); }
+    .nav-tabs a.active { background: none; }
+    .nav-toggle { display: block; }
   }
 
-  .msg { display: flex; width: 100%; }
-  .msg.user { justify-content: flex-end; }
-  .msg.user .bubble {
-    background: var(--bg-user-bubble);
-    border-radius: 20px;
-    padding: 10px 16px;
-    max-width: 75%;
-  }
-  .msg.assistant .bubble {
-    padding: 4px 0;
-    max-width: 100%;
-  }
-  .bubble {
-    font-size: 15px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-
-  .typing {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--text-main);
-    animation: pulse 1s infinite ease-in-out;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.25; transform: scale(0.85); }
-    50% { opacity: 1; transform: scale(1); }
-  }
-
-  /* ── Welcome / centered state ────────────── */
-  .welcome {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 0 16px;
-    min-height: 0;
-  }
-
+  /* ═══ Hero ═════════════════════════════════ */
   .hero {
     position: relative;
+    height: 100svh;
+    min-height: 620px;
     width: 100%;
-    max-width: 720px;
-    border-radius: 24px;
     overflow: hidden;
-    margin-bottom: 24px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-    flex-shrink: 1;
-    min-height: 0;
+    display: flex;
+    align-items: flex-end;
   }
   .hero img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: 45vh;
-    object-fit: cover;
-    object-position: center 60%;
-  }
-  .hero-overlay {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 28px;
-    background: linear-gradient(to top, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0) 70%);
-    color: #fff;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 55%;
+    transform: scale(1.06);
+    animation: heroDrift 22s ease-out forwards;
+  }
+  @keyframes heroDrift { to { transform: scale(1); } }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(to bottom, rgba(10,10,11,0.55) 0%, rgba(10,10,11,0) 26%),
+      linear-gradient(to top, rgba(10,10,11,0.96) 0%, rgba(10,10,11,0.4) 38%, rgba(10,10,11,0) 62%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 0 var(--pad) clamp(64px, 10vh, 120px);
+    max-width: 1280px;
+    margin: 0 auto;
   }
   .hero-eyebrow {
     font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
+    font-weight: 500;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    opacity: 0.85;
-    margin-bottom: 6px;
+    color: var(--amber);
+    margin-bottom: 22px;
   }
-  .hero-overlay h1 {
-    font-size: 30px;
-    font-weight: 600;
-    line-height: 1.2;
-    margin-bottom: 4px;
+  .hero h1 {
+    font-size: clamp(44px, 7.2vw, 104px);
+    max-width: 12ch;
+    margin-bottom: 30px;
   }
-  .hero-tagline {
-    font-size: 15px;
-    opacity: 0.9;
+  .hero-sub {
+    max-width: 560px;
+    font-size: clamp(16px, 1.6vw, 19px);
+    color: var(--ink-dim);
+    line-height: 1.7;
+  }
+  .hero-sub strong { color: var(--ink); font-weight: 400; }
+  .hero-scroll {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    width: 1px;
+    height: 44px;
+    background: linear-gradient(to bottom, transparent, rgba(242,237,228,0.5));
+    animation: scrollHint 2.4s ease-in-out infinite;
+  }
+  @keyframes scrollHint {
+    0%, 100% { opacity: 0.25; transform: translateX(-50%) scaleY(0.6); transform-origin: top; }
+    50% { opacity: 1; transform: translateX(-50%) scaleY(1); }
   }
 
-  /* ── Input box ───────────────────────────── */
-  .composer-wrap {
-    width: 100%;
-    max-width: 720px;
-    padding: 0 16px;
+  /* ═══ Layout primitives ════════════════════ */
+  .section { padding: clamp(90px, 13vh, 170px) var(--pad); position: relative; }
+  .section.tight { padding-top: clamp(50px, 7vh, 90px); }
+  .section.soft { background: var(--bg-soft); }
+  .container { max-width: 1140px; margin: 0 auto; }
+  .container.narrow { max-width: 780px; }
+
+  .kicker {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
   }
-  .chat-container.chatting .composer-wrap {
-    padding-bottom: 16px;
+  h2 {
+    font-size: clamp(32px, 4.6vw, 58px);
+    margin-bottom: 26px;
+    max-width: 20ch;
   }
-  .composer {
+  .center { text-align: center; }
+  .center h2, .center .lead { margin-left: auto; margin-right: auto; }
+  .lead {
+    font-size: clamp(16px, 1.5vw, 19px);
+    color: var(--ink-dim);
+    max-width: 620px;
+    line-height: 1.75;
+  }
+  .lead strong, .lead b { color: var(--ink); font-weight: 400; }
+  .lead + .lead { margin-top: 18px; }
+
+  /* Big poetic statement */
+  .statement {
+    font-family: var(--serif);
+    font-weight: 340;
+    font-size: clamp(28px, 4vw, 52px);
+    line-height: 1.28;
+    max-width: 22ch;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .statement em { font-style: italic; color: var(--amber); }
+  .statement .dim { color: var(--muted); }
+
+  /* Quote pills */
+  .quotes {
     display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    width: 100%;
-    background: var(--bg-input);
-    border-radius: 26px;
-    padding: 10px 10px 10px 20px;
-    box-shadow: 0 0 0 1px var(--border);
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 860px;
+    margin: 48px auto 0;
   }
-  .composer textarea {
-    flex: 1;
-    border: none;
-    background: transparent;
-    resize: none;
-    outline: none;
-    font-family: inherit;
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--text-main);
-    max-height: 200px;
-    padding: 6px 0;
+  .quotes.left { justify-content: flex-start; margin-left: 0; }
+  .quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(15px, 1.5vw, 18px);
+    color: var(--ink);
+    background: rgba(242, 237, 228, 0.045);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 12px 24px;
+    white-space: nowrap;
   }
-  .composer textarea::placeholder { color: var(--text-secondary); }
+  @media (max-width: 640px) { .quote { white-space: normal; } }
 
-  .send-btn {
+  /* Dialogue exchange */
+  .dialogue {
+    max-width: 640px;
+    margin: 52px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .dialogue .you, .dialogue .speak {
+    max-width: 82%;
+    padding: 14px 22px;
+    border-radius: 22px;
+    font-size: clamp(15px, 1.5vw, 17px);
+    line-height: 1.6;
+  }
+  .dialogue .you {
+    align-self: flex-end;
+    background: rgba(211, 168, 106, 0.12);
+    border: 1px solid rgba(211, 168, 106, 0.22);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-style: italic;
+    border-bottom-right-radius: 6px;
+  }
+  .dialogue .speak {
+    align-self: flex-start;
+    background: rgba(242, 237, 228, 0.05);
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    border-bottom-left-radius: 6px;
+    position: relative;
+    padding-left: 42px;
+  }
+  .dialogue .speak::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    top: 22px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    border: 2px solid var(--glow);
+    box-shadow: 0 0 10px rgba(168, 216, 240, 0.55);
+  }
+
+  /* Feature split */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(40px, 6vw, 100px);
+    align-items: center;
+  }
+  .split.reverse > :first-child { order: 2; }
+  @media (max-width: 880px) {
+    .split { grid-template-columns: 1fr; }
+    .split.reverse > :first-child { order: 0; }
+  }
+
+  /* Cards */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+    margin-top: 56px;
+  }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 34px 30px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .card:hover { border-color: rgba(211, 168, 106, 0.3); transform: translateY(-3px); }
+  .card h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  .card p { font-size: 15px; color: var(--ink-dim); line-height: 1.7; }
+  .card p strong { color: var(--ink); font-weight: 400; }
+  .card .q {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink);
+    display: block;
+    margin-top: 14px;
+    font-size: 16px;
+  }
+  .card .q.dim { color: var(--muted); }
+
+  /* Word list (memory items etc.) */
+  .wordlist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin-top: 40px;
+    max-width: 820px;
+  }
+  .wordlist span {
+    font-size: 15px;
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 8px 18px;
+  }
+
+  /* Ring divider */
+  .ring-divider {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 0;
+  }
+  .ring {
+    width: 74px; height: 74px;
+    border-radius: 50%;
+    position: relative;
+    background: radial-gradient(circle at 35% 30%, #26262a, #121214 65%);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.55), inset 0 1px 1px rgba(255,255,255,0.09);
+  }
+  .ring::before {
+    content: "";
+    position: absolute;
+    inset: 22px;
+    border-radius: 50%;
+    background: var(--bg);
+    box-shadow: inset 0 3px 8px rgba(0,0,0,0.8);
+  }
+  .ring::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(168, 216, 240, 0.65);
+    filter: blur(0.4px);
+    box-shadow: 0 0 18px rgba(168, 216, 240, 0.4), inset 0 0 12px rgba(168, 216, 240, 0.18);
+    animation: ringPulse 4s ease-in-out infinite;
+  }
+  @keyframes ringPulse {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 1; }
+  }
+
+  /* Numbered flow steps */
+  .flow {
+    max-width: 720px;
+    margin: 48px auto 0;
+    border-left: 1px solid var(--line);
+    padding-left: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+  .flow .step { position: relative; }
+  .flow .step::before {
+    content: "";
+    position: absolute;
+    left: -41px;
+    top: 8px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 0 4px rgba(211, 168, 106, 0.15);
+  }
+  .flow .step h3 { font-size: 20px; margin-bottom: 8px; }
+  .flow .step p { color: var(--ink-dim); font-size: 15.5px; }
+  .flow .step .q { font-family: var(--serif); font-style: italic; color: var(--ink); }
+
+  /* Contrast pairs (instead of / try) */
+  .pairs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+    margin-top: 52px;
+  }
+  .pair {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 30px;
+  }
+  .pair .no {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .pair .no-q {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: rgba(131,124,112,0.5);
+    font-size: 17px;
+    margin-bottom: 20px;
+  }
+  .pair .yes {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 8px;
+  }
+  .pair .yes-q {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink);
+    font-size: 21px;
+  }
+
+  /* Wall of sayings */
+  .wall {
+    columns: 3;
+    column-gap: 16px;
+    max-width: 1000px;
+    margin: 60px auto 0;
+  }
+  @media (max-width: 900px) { .wall { columns: 2; } }
+  @media (max-width: 560px) { .wall { columns: 1; } }
+  .wall .quote {
+    display: block;
+    white-space: normal;
+    margin-bottom: 16px;
+    break-inside: avoid;
+    text-align: center;
+    font-size: 17px;
+  }
+  .wall .quote.highlight {
+    border-color: rgba(211, 168, 106, 0.45);
+    color: var(--amber);
+  }
+
+  /* Closing */
+  .closing {
+    position: relative;
+    min-height: 88svh;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: none;
-    border-radius: 50%;
-    background: var(--accent);
-    color: #fff;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: opacity 0.15s;
-  }
-  .send-btn:disabled { opacity: 0.3; cursor: default; }
-  .send-btn svg { width: 18px; height: 18px; }
-
-  .disclaimer {
+    overflow: hidden;
     text-align: center;
-    font-size: 12px;
-    color: var(--text-secondary);
-    padding: 8px 16px 4px;
+    padding: 120px var(--pad);
   }
-
-  /* ── Mobile ──────────────────────────────── */
-  .backdrop {
-    display: none;
-    position: fixed;
+  .closing img {
+    position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.35);
-    z-index: 15;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 62%;
+    opacity: 0.5;
   }
+  .closing::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(to bottom, var(--bg) 0%, rgba(10,10,11,0.25) 40%, rgba(10,10,11,0.25) 60%, var(--bg) 100%);
+  }
+  .closing-content { position: relative; z-index: 2; }
+  .closing .kicker { margin-bottom: 26px; }
+  .closing h2 {
+    font-size: clamp(40px, 6.5vw, 88px);
+    max-width: none;
+    margin-bottom: 10px;
+  }
+  .closing h2 .live { font-style: italic; color: var(--amber); }
 
-  @media (max-width: 768px) {
-    .sidebar {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      margin-left: calc(-1 * var(--sidebar-width));
-      box-shadow: 2px 0 12px rgba(0,0,0,0.1);
-    }
-    .sidebar.mobile-open { margin-left: 0; }
-    .sidebar.mobile-open ~ .backdrop { display: block; }
-    .topbar .icon-btn.open-sidebar { display: flex; }
-    .hero-overlay { padding: 18px; }
-    .hero-overlay h1 { font-size: 22px; }
-    .hero img { aspect-ratio: 4 / 3; }
+  footer {
+    padding: 44px var(--pad) 56px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  footer .nav-brand { font-size: 16px; }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .hero img { animation: none; transform: none; }
   }
 </style>
 </head>
 <body>
-<div class="app" id="app">
 
-  <!-- Sidebar -->
-  <nav class="sidebar" id="sidebar" aria-label="Chat history">
-    <div class="sidebar-header">
-      <button class="icon-btn" id="closeSidebarBtn" title="Close sidebar" aria-label="Close sidebar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
-    </div>
-
-    <button class="new-chat-btn" id="newChatBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-      </svg>
-      New chat
-    </button>
-
-    <div class="sidebar-section-label">Chats</div>
-    <div class="chat-list" id="chatList"></div>
-
-    <div class="sidebar-footer">
-      <button class="profile-btn">
-        <span class="avatar">GS</span>
-        <span>Guest</span>
-      </button>
-    </div>
+<!-- ═══ Nav with integrated tabs ═══ -->
+<header class="nav" id="nav">
+  <a class="nav-brand" href="#top">ChatGPT <em>Speak</em></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/>
+    </svg>
+  </button>
+  <nav class="nav-tabs" id="navTabs">
+    <a href="#conversation">Conversation</a>
+    <a href="#memory">Memory</a>
+    <a href="#actions">Actions</a>
+    <a href="#everyday">Everyday</a>
+    <a href="#home">Home</a>
+    <a href="#work">Work</a>
+    <a href="#privacy">Privacy</a>
+    <a href="#design">Design</a>
   </nav>
-  <div class="backdrop" id="backdrop"></div>
+</header>
 
-  <!-- Main -->
-  <main class="main">
-    <header class="topbar">
-      <button class="icon-btn open-sidebar" id="openSidebarBtn" title="Open sidebar" aria-label="Open sidebar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
-      <div class="brand">ChatGPTSpeak <span>beta</span></div>
-    </header>
+<!-- ═══ Hero — full bleed, edge to edge ═══ -->
+<section class="hero" id="top">
+  <img src="assets/hero.jpg" alt="ChatGPT Speak resting on a dark dining table in a warmly lit home" fetchpriority="high">
+  <div class="hero-content">
+    <div class="hero-eyebrow">ChatGPT Speak</div>
+    <h1>Intelligence that lives with you.</h1>
+    <p class="hero-sub"><strong>ChatGPT Speak isn't a smart speaker.</strong> It's ChatGPT given a place in the physical world. Speak understands conversation, remembers what matters, works across the services you already use, coordinates the devices around you, and can take action on your behalf.</p>
+  </div>
+  <div class="hero-scroll" aria-hidden="true"></div>
+</section>
 
-    <div class="chat-container" id="chatContainer">
-      <!-- Messages (hidden until first message) -->
-      <div class="messages" id="messages">
-        <div class="messages-inner" id="messagesInner"></div>
-      </div>
+<!-- ═══ Just speak ═══ -->
+<section class="section" id="conversation">
+  <div class="container center reveal">
+    <p class="statement">You don't need to stop what you're doing, find your phone, open an app, or formulate the perfect command.<br><em>Just speak.</em></p>
+  </div>
+</section>
 
-      <!-- Welcome state: hero + centered chat box -->
-      <div class="welcome" id="welcome">
-        <div class="hero">
-          <img src="assets/hero.jpg" alt="The ChatGPTSpeak smart speaker glowing on a dining table in a modern home">
-          <div class="hero-overlay">
-            <div class="hero-eyebrow">ChatGPTSpeak</div>
-            <h1>What can I help with?</h1>
-            <div class="hero-tagline">Speak naturally. Get answers instantly.</div>
-          </div>
-        </div>
-        <div class="composer-wrap">
-          <form class="composer" id="composerForm">
-            <textarea id="composerInput" rows="1" placeholder="Ask anything" aria-label="Message ChatGPTSpeak"></textarea>
-            <button class="send-btn" id="sendBtn" type="submit" disabled aria-label="Send message">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
-              </svg>
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <div class="disclaimer">ChatGPTSpeak can make mistakes. Check important info.</div>
+<section class="section tight">
+  <div class="container center reveal">
+    <div class="kicker">Conversation</div>
+    <h2 style="margin-inline:auto">Just talk.</h2>
+    <p class="lead"><strong>No commands to memorize. No rigid phrases. No menus.</strong> Speak understands normal conversation, including follow-up questions, interruptions, corrections, references to things you discussed earlier, and conversations involving multiple people.</p>
+    <div class="quotes">
+      <span class="quote">“Do we have anything going on Saturday?”</span>
+      <span class="quote">“What was the name of that restaurant Sarah liked?”</span>
+      <span class="quote">“Actually, move that to Sunday.”</span>
+      <span class="quote">“Remind me what we decided about the basement.”</span>
+      <span class="quote">“Can you handle that?”</span>
     </div>
-  </main>
-</div>
+    <p class="lead" style="margin-top:44px">Speak understands the conversation around the request, not just the last sentence you said.</p>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">Presence</div>
+      <h2>It knows when you're talking to it.</h2>
+      <p class="lead">You don't have to begin every interaction with a wake phrase. Speak can recognize when it's being addressed through conversational context, voice direction, proximity, and interaction history.</p>
+    </div>
+    <div class="reveal">
+      <div class="flow" style="margin-top:0">
+        <div class="step"><h3>Ask it directly.</h3></div>
+        <div class="step"><h3>Look toward it and speak.</h3></div>
+        <div class="step"><h3>Tap the surface to bring it into a conversation.</h3></div>
+        <div class="step"><h3>Or use a wake phrase whenever you prefer.</h3></div>
+      </div>
+      <p class="lead" style="margin-top:36px">When Speak isn't part of the conversation, <strong>it stays out of it.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Memory ═══ -->
+<section class="section" id="memory">
+  <div class="container reveal">
+    <div class="kicker">Memory</div>
+    <h2>A memory for your home.</h2>
+    <p class="lead">Speak can remember the things that disappear into everyday life.</p>
+    <div class="wordlist">
+      <span>Where you put something</span>
+      <span>What you decided</span>
+      <span>Which contractor fixed the roof</span>
+      <span>The paint color in the bedroom</span>
+      <span>Your daughter's favorite restaurant</span>
+      <span>The instructions for resetting the furnace</span>
+      <span>What everyone wanted for Christmas</span>
+      <span>The name of the wine you loved on vacation</span>
+      <span>The story your grandfather told at dinner</span>
+    </div>
+    <p class="lead" style="margin-top:44px"><strong>You decide what Speak remembers, what it forgets, and what remains private.</strong></p>
+  </div>
+  <div class="container center reveal" style="margin-top:70px">
+    <p class="lead">Ask:</p>
+    <div class="quotes">
+      <span class="quote">“Where did I put the passports?”</span>
+      <span class="quote">“What size filter does the furnace take?”</span>
+      <span class="quote">“Who installed the dishwasher?”</span>
+      <span class="quote">“What did we decide about Thanksgiving?”</span>
+      <span class="quote">“What was that hotel we stayed at in Maine?”</span>
+    </div>
+    <p class="lead" style="margin-top:40px">Speak searches your household memory and gives you the answer.</p>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">People</div>
+      <h2>One ChatGPT for the household.</h2>
+      <p class="lead">Speak understands that a home isn't one person. It recognizes different voices and maintains separate relationships with the people who use it.</p>
+      <p class="lead"><strong>Your preferences remain yours. Your calendar remains yours. Your messages remain yours.</strong> Shared information can become part of the household. Private information stays private.</p>
+    </div>
+    <div class="reveal">
+      <div class="dialogue" style="margin-top:0">
+        <div class="you">“When is my soccer game?”</div>
+        <div class="speak">A child asking gets a different context…</div>
+        <div class="you">“What do I have tomorrow?”</div>
+        <div class="speak">…than a parent asking.</div>
+      </div>
+      <p class="lead center" style="margin-top:36px; max-width:none"><strong>Same Speak. Different people. Different permissions.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Actions ═══ -->
+<section class="section" id="actions">
+  <div class="container center reveal">
+    <div class="kicker">Action</div>
+    <h2 style="margin-inline:auto">It can actually do things.</h2>
+    <p class="lead">Answers are only the beginning. Speak can work across connected services to complete tasks for you.</p>
+    <div class="quotes">
+      <span class="quote">“Move my haircut to next week.”</span>
+      <span class="quote">“Order another bag of the dog food.”</span>
+      <span class="quote">“Find someone who can clean the gutters.”</span>
+      <span class="quote">“Tell everyone dinner is at six.”</span>
+      <span class="quote">“Book the same hotel we stayed at last time.”</span>
+      <span class="quote">“Pay the electric bill.”</span>
+      <span class="quote">“Find a plumber who can come tomorrow.”</span>
+      <span class="quote">“Cancel that subscription.”</span>
+      <span class="quote">“Send Mike the pictures from yesterday.”</span>
+      <span class="quote">“Add everything we need for tacos to the grocery order.”</span>
+    </div>
+    <p class="lead" style="margin-top:44px">Speak can research, compare, communicate, schedule, organize, purchase, and coordinate. <strong>You choose which actions require approval.</strong></p>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">Agency</div>
+      <h2>Give it a job.</h2>
+      <p class="lead">Some things don't need to happen immediately. Tell Speak what you want accomplished and let it work on the problem.</p>
+      <p class="lead">Speak can contact providers, gather estimates, compare reviews, check availability, ask follow-up questions, and return when there's a decision to make.</p>
+      <p class="lead"><strong>A conversation can become a task. A task can continue for hours or days.</strong> You don't have to manage every step.</p>
+    </div>
+    <div class="reveal">
+      <div class="dialogue" style="margin-top:0">
+        <div class="you">“Find someone who can repair the window for under $500.”</div>
+        <div class="speak">I found three options. The best-reviewed company can come Thursday morning for $425. Want me to book it?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container reveal">
+    <div class="kicker">Awareness</div>
+    <h2>Speak notices things.</h2>
+    <p class="lead">With supported devices and permissions, Speak can understand what's happening around your home.</p>
+    <div class="wordlist">
+      <span>“The washer finished.”</span>
+      <span>“Someone left the garage door open.”</span>
+      <span>“The refrigerator door has been open for five minutes.”</span>
+      <span>“The smoke detector upstairs is chirping.”</span>
+      <span>“Your package was delivered.”</span>
+      <span>“The basement humidity has been climbing.”</span>
+      <span>“The dog has been waiting by the back door.”</span>
+      <span>“You normally leave for school by now.”</span>
+    </div>
+    <p class="lead" style="margin-top:44px">But awareness doesn't have to mean interruption. <strong>Speak learns what's important enough to tell you now, what can wait, and what doesn't require your attention at all.</strong></p>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">Restraint</div>
+      <h2>It knows when not to talk.</h2>
+      <p class="lead">Good intelligence isn't constantly interrupting you. Speak can communicate without speaking.</p>
+      <p class="lead">A soft pulse can mean there's something waiting. A different light can indicate an active task. Touch the surface when you're ready.</p>
+      <p class="lead"><strong>Not twenty notifications. Not another inbox. Just what matters.</strong></p>
+    </div>
+    <div class="reveal">
+      <div class="ring-divider"><div class="ring"></div></div>
+      <div class="dialogue">
+        <div class="you">“What did I miss?”</div>
+        <div class="speak">And Speak gives you the important things.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split reverse">
+    <div class="reveal">
+      <div class="kicker">Mornings</div>
+      <h2>Your morning, already understood.</h2>
+      <p class="lead">Speak can know what that means for you. <strong>No dashboard required. No five-app morning ritual.</strong> Just the information relevant to your day.</p>
+    </div>
+    <div class="reveal">
+      <div class="dialogue" style="margin-top:0">
+        <div class="you">“Morning.”</div>
+        <div class="speak">You have your team call at nine. Traffic is normal. It's going to rain around three, so I'd bring the umbrella. The package you've been waiting for is arriving today. And Sarah moved dinner to seven.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Everyday ═══ -->
+<section class="section soft" id="everyday">
+  <div class="container center reveal">
+    <div class="kicker">Everyday life</div>
+    <h2 style="margin-inline:auto">Part of the house, not another device in it.</h2>
+  </div>
+  <div class="container">
+    <div class="grid">
+      <div class="card reveal">
+        <h3>Cook with it.</h3>
+        <p>Speak can become part of the kitchen without requiring you to touch a screen.</p>
+        <span class="q">“What can I make with what we have?”</span>
+        <span class="q">“Walk me through the risotto.”</span>
+        <span class="q">“How much is two-thirds of a cup doubled?”</span>
+        <span class="q">“Start a timer when I put these in.”</span>
+        <span class="q">“Is this supposed to look this thick?”</span>
+        <span class="q">“What did I change last time?”</span>
+        <span class="q">“Add parmesan to the grocery list.”</span>
+        <p style="margin-top:16px">And your recipes can evolve with you.</p>
+        <span class="q">“Save this version. Everyone liked it better.”</span>
+        <p style="margin-top:14px">Next time: <em>“Make the pasta we liked.”</em> <strong>Speak knows which one.</strong></p>
+      </div>
+      <div class="card reveal">
+        <h3>Shop naturally.</h3>
+        <p>You shouldn't need to remember everything you need while standing in a grocery aisle. Just mention things as they happen.</p>
+        <span class="q">“We're almost out of coffee.”</span>
+        <span class="q">“We need toothpaste.”</span>
+        <span class="q">“Don't buy those paper towels again.”</span>
+        <span class="q">“Get the cereal the kids actually ate.”</span>
+        <p style="margin-top:16px">Speak can maintain a living household list and, when you allow it, build or place orders automatically. Before checkout:</p>
+        <span class="q dim">“You have 17 items. I found the same detergent for $6 less in the larger size. Switch it?”</span>
+      </div>
+      <div class="card reveal">
+        <h3>Plan dinner.</h3>
+        <span class="q">“People are coming over Friday.”</span>
+        <p style="margin-top:14px">Speak can help turn that sentence into everything that follows — suggest a menu based on dietary preferences, create the grocery list, check what you already have, schedule grocery delivery, remind you when food needs to start cooking, adjust recipes for eight people, and coordinate timing.</p>
+        <span class="q">“When should I put the roast in?”</span>
+        <span class="q dim">“5:10 if you want to eat at seven.”</span>
+      </div>
+      <div class="card reveal">
+        <h3>Remember your recipes.</h3>
+        <p>Speak doesn't just know recipes from the internet. <strong>It can know your recipes.</strong></p>
+        <span class="q">“Mom uses more cinnamon.”</span>
+        <span class="q">“Dad doesn't like onions.”</span>
+        <span class="q">“We doubled the sauce last time.”</span>
+        <span class="q">“That took 45 minutes, not 30.”</span>
+        <span class="q">“Use the version we made at Christmas.”</span>
+        <p style="margin-top:16px">Over time, your family's cooking becomes part of your household knowledge.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Plan trips together.</h3>
+        <p>Travel planning becomes a conversation. Speak can research destinations, understand everyone's schedules, compare flights, evaluate hotels, consider weather, account for preferences, and build complete options.</p>
+        <span class="q">“We need somewhere warm.”</span>
+        <span class="q dim">“How long?”</span>
+        <span class="q">“Maybe four nights.”</span>
+        <span class="q dim">“Beach, resort, or somewhere with things to do?”</span>
+        <span class="q">“Beach, but not just sitting around.”</span>
+        <p style="margin-top:16px">Then: <em>“Option two.”</em> Flights, hotel, transportation, reservations, calendar events, packing reminders, and itinerary can all follow from the decision.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Remember where you've been.</h3>
+        <span class="q">“What was that restaurant near our hotel in Chicago?”</span>
+        <p style="margin-top:14px">Speak can connect past trips, calendars, photos, reservations, messages, and household memory.</p>
+        <span class="q dim">“The Italian place was Monteverde. You went Saturday night and later said the burrata was the best thing you ordered.”</span>
+        <span class="q">“Can we go again?”</span>
+        <span class="q dim">“I found a table Friday at 7:30.”</span>
+      </div>
+      <div class="card reveal">
+        <h3>Manage the family calendar.</h3>
+        <p>Speak doesn't just display calendars. <strong>It understands the people behind them.</strong></p>
+        <span class="q">“Find a night everyone is free.”</span>
+        <span class="q">“Can Emma make the dentist Tuesday?”</span>
+        <span class="q">“When can we visit Mom?”</span>
+        <span class="q">“Move dinner somewhere after Jake's practice.”</span>
+        <span class="q">“Give us one weekend with absolutely nothing scheduled.”</span>
+        <p style="margin-top:16px">It can reason across multiple schedules while respecting everyone's permissions.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Help with homework — without doing it for them.</h3>
+        <span class="q">“I'm stuck.”</span>
+        <p style="margin-top:14px">Speak can adjust how it teaches based on the person asking. Instead of immediately giving the answer:</p>
+        <span class="q dim">“Show me where you're stuck.”</span>
+        <p style="margin-top:14px">It can explain concepts differently, generate examples, ask questions, quiz students, create study plans, and remember what they've mastered.</p>
+        <span class="q">“Quiz me on the words I missed yesterday.”</span>
+        <p style="margin-top:14px"><strong>Speak already knows which ones.</strong></p>
+      </div>
+      <div class="card reveal">
+        <h3>Read together.</h3>
+        <span class="q">“Keep reading.”</span>
+        <p style="margin-top:14px">Speak remembers where you stopped. Ask questions while listening.</p>
+        <span class="q">“Why did he do that?”</span>
+        <span class="q">“Who is she again?”</span>
+        <span class="q">“Was that mentioned earlier?”</span>
+        <span class="q">“What does that word mean?”</span>
+        <p style="margin-top:14px">The book becomes conversational without losing your place.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Tell stories.</h3>
+        <span class="q">“Tell us a story about a dragon named Pickles.”</span>
+        <p style="margin-top:14px">Speak can create stories interactively.</p>
+        <span class="q dim">“What should Pickles find?”</span>
+        <span class="q">“A spaceship!”</span>
+        <span class="q dim">“And who's flying it?”</span>
+        <span class="q">“Grandma!”</span>
+        <p style="margin-top:14px">The story changes as everyone participates. Tomorrow: <em>“Continue the Pickles story.”</em> It remembers where you left off.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Capture family stories.</h3>
+        <p>Some memories shouldn't disappear.</p>
+        <span class="q">“Tell Speak the story about Grandpa's first car.”</span>
+        <p style="margin-top:14px">Speak can listen, organize the story, identify people and places, and preserve it in your family's private archive. Later, someone can ask:</p>
+        <span class="q">“What did Grandpa say his first job was?”</span>
+        <p style="margin-top:14px"><strong>Family history becomes searchable.</strong></p>
+      </div>
+      <div class="card reveal">
+        <h3>Help care for the people you love.</h3>
+        <p>Speak can provide gentle support for routines when people choose to use it.</p>
+        <span class="q">“Did Dad take his afternoon medicine?”</span>
+        <span class="q">“Call Mom.”</span>
+        <span class="q">“Remind Grandma about her appointment.”</span>
+        <span class="q">“Tell me if she doesn't answer this morning.”</span>
+        <p style="margin-top:14px">Connected households can share selected information without sharing everything.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Home ═══ -->
+<section class="section" id="home">
+  <div class="container center reveal">
+    <div class="kicker">The home</div>
+    <h2 style="margin-inline:auto">Your home can talk to itself.</h2>
+    <p class="lead">Speak can coordinate connected devices instead of making you control them individually.</p>
+    <div class="dialogue">
+      <div class="you">“It's movie night.”</div>
+      <div class="speak">Lights adjust. Blinds close. The television turns on. Temperature changes. Phones quiet down.</div>
+      <div class="speak">Want me to order the pizza too?</div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="container center reveal">
+    <h2 style="margin-inline:auto">Don't automate devices.<br>Automate outcomes.</h2>
+    <div class="pairs">
+      <div class="pair reveal">
+        <div class="no">Instead of</div>
+        <div class="no-q">“Set the thermostat to 70.”</div>
+        <div class="yes">Try</div>
+        <div class="yes-q">“It's cold in here.”</div>
+      </div>
+      <div class="pair reveal">
+        <div class="no">Instead of</div>
+        <div class="no-q">“Turn off the downstairs lights.”</div>
+        <div class="yes">Try</div>
+        <div class="yes-q">“Everyone's going to bed.”</div>
+      </div>
+      <div class="pair reveal">
+        <div class="no">Instead of</div>
+        <div class="no-q">“Start the robot vacuum.”</div>
+        <div class="yes">Try</div>
+        <div class="yes-q">“Get the house ready before people arrive.”</div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:44px">Speak determines what needs to happen across connected devices.</p>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">Routines</div>
+      <h2>Routines without programming them.</h2>
+      <p class="lead"><strong>You don't build automations. You describe what you want.</strong> Speak turns intentions into routines.</p>
+    </div>
+    <div class="reveal">
+      <div class="quotes left" style="margin-top:0">
+        <span class="quote">“When the last person leaves, shut everything down.”</span>
+        <span class="quote">“On school mornings, tell us if we're running late.”</span>
+        <span class="quote">“If nobody's downstairs after midnight, turn everything off.”</span>
+        <span class="quote">“Keep the bedroom cooler when we're sleeping.”</span>
+        <span class="quote">“Don't run the vacuum when the baby's asleep.”</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split reverse">
+    <div class="reveal">
+      <div class="kicker">Music</div>
+      <h2>Music becomes conversational.</h2>
+      <p class="lead">Speak can understand the room, occasion, people present, and listening history. <strong>Music doesn't need to begin with knowing the name of a playlist.</strong></p>
+    </div>
+    <div class="reveal">
+      <div class="dialogue" style="margin-top:0">
+        <div class="you">“Play something relaxed.”</div>
+        <div class="you">“More upbeat.”</div>
+        <div class="you">“Not that upbeat.”</div>
+        <div class="you">“Something like what we listened to Saturday.”</div>
+        <div class="you">“Everyone likes this. Save it.”</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container">
+    <div class="split">
+      <div class="reveal">
+        <div class="kicker">Whole home</div>
+        <h2>Sound follows you.</h2>
+        <p class="lead">With multiple Speak devices, audio can move naturally through the home.</p>
+        <div class="quotes left">
+          <span class="quote">“Keep playing upstairs.”</span>
+          <span class="quote">“Move this to the kitchen.”</span>
+          <span class="quote">“Play this everywhere.”</span>
+        </div>
+        <p class="lead" style="margin-top:32px">Or Speak can infer movement when you've enabled it. Walk from the kitchen into the living room and your podcast continues there.</p>
+      </div>
+      <div class="reveal">
+        <div class="kicker">Continuity</div>
+        <h2>Have a conversation from anywhere.</h2>
+        <p class="lead">Start downstairs: <em class="serif">“Help me think through the presentation tomorrow.”</em> Continue while walking upstairs. Speak maintains the conversation across devices.</p>
+        <p class="lead"><strong>You aren't talking to individual speakers. You're talking to the same ChatGPT throughout the home.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Work & mind ═══ -->
+<section class="section" id="work">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">Thinking</div>
+      <h2>Brainstorm out loud.</h2>
+      <p class="lead">Some thinking works better when you're walking around. <em class="serif">“I'm trying to figure something out.”</em> Speak can become a thinking partner — challenge an idea, organize thoughts, remember unfinished ideas, connect something you said earlier.</p>
+      <p class="lead"><strong>Your spoken thoughts become usable knowledge instead of disappearing.</strong></p>
+    </div>
+    <div class="reveal">
+      <div class="dialogue" style="margin-top:0">
+        <div class="speak">Wait. That's related to the thing you mentioned Tuesday about customer onboarding.</div>
+      </div>
+      <div style="margin-top:36px">
+        <h3 class="serif" style="font-size:24px; margin-bottom:12px">Capture ideas instantly.</h3>
+        <p class="lead"><em class="serif">“I just had an idea.”</em> Say it. That's enough. Speak can save it, categorize it, connect it to a project, expand it later, or remind you when it's relevant.</p>
+        <p class="lead"><em class="serif">“Show me the ideas I've had about the new product.”</em><br>Your shower thoughts finally have a database.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container">
+    <div class="grid">
+      <div class="card reveal">
+        <h3>Meetings without meeting notes.</h3>
+        <p>Put Speak in a room with permission from everyone participating. It can capture decisions rather than simply producing transcripts. Afterward:</p>
+        <span class="q dim">“We made three decisions, assigned four actions, and left two questions unresolved.”</span>
+        <span class="q">“Why did we decide against option B?”</span>
+        <p style="margin-top:14px">Speak can retrieve the reasoning behind the decision.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Work without sitting at your computer.</h3>
+        <span class="q">“What's happening with the Anderson project?”</span>
+        <span class="q">“Anything I need to respond to?”</span>
+        <span class="q">“Give me the important stuff from Slack.”</span>
+        <span class="q">“Draft a response to Kelly.” “Read it.” “Make that less formal.” “Send it.”</span>
+        <p style="margin-top:14px">The computer becomes available while you're walking, cooking, getting dressed, or staring at a whiteboard.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Catch me up.</h3>
+        <p>One of Speak's most common requests can simply be: <em>“Catch me up.”</em> It understands the context.</p>
+        <p style="margin-top:12px"><strong>Work:</strong> “You received two messages that need decisions.”</p>
+        <p><strong>Home:</strong> “The plumber confirmed tomorrow and your grocery order substituted two items.”</p>
+        <p><strong>Family:</strong> “Emma's practice moved to six.”</p>
+        <p style="margin-top:12px">You don't need to check every system separately.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Handle the boring stuff.</h3>
+        <span class="q">“Call the insurance company and figure out why the bill increased.”</span>
+        <span class="q">“Get the internet company to lower our rate.”</span>
+        <span class="q">“Cancel the trial before it renews.”</span>
+        <span class="q">“Find out where that refund is.”</span>
+        <span class="q">“Schedule the inspection.”</span>
+        <span class="q">“Return these shoes.”</span>
+        <p style="margin-top:14px">Speak can deploy agents to deal with administrative work and return when your judgment or authorization is needed.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Wait on hold for me.</h3>
+        <p>Nobody should spend forty minutes listening to hold music. Speak can handle supported service interactions and bring you in when a human actually needs you.</p>
+        <span class="q dim">“They're ready for you.”</span>
+      </div>
+      <div class="card reveal">
+        <h3>Research while you live your life.</h3>
+        <span class="q">“Figure out which lawn mower we should buy.”</span>
+        <p style="margin-top:14px">Speak doesn't need you standing there while it researches. Later:</p>
+        <span class="q dim">“I narrowed it down to three. One is cheaper, one is quieter, and one has significantly better repairability. Based on what you've told me, I'd pick the quieter one.”</span>
+        <p style="margin-top:14px">You can ask <em>“Why?”</em> and continue from there.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Watch something for me.</h3>
+        <span class="q">“Tell me when these tickets go on sale.”</span>
+        <span class="q">“Let me know when that package arrives.”</span>
+        <span class="q">“Watch the price of that flight.”</span>
+        <span class="q">“Tell me when the repair person is close.”</span>
+        <span class="q">“Let me know if tomorrow's game gets moved.”</span>
+        <p style="margin-top:14px">Some requests aren't questions. They're things you want another intelligence to keep track of.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Make decisions together.</h3>
+        <p>Speak doesn't need to decide everything. It can reduce complexity until the decision becomes easy.</p>
+        <span class="q dim">“We have five contractors. Two can't come this month. One is significantly more expensive. These two are the strongest choices.”</span>
+        <p style="margin-top:14px">Then you decide. <strong>The goal isn't removing humans from decisions. It's removing the work required to reach them.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Spatial awareness ═══ -->
+<section class="section">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">The room</div>
+      <h2>Understand the room.</h2>
+      <p class="lead">With compatible sensors and explicit permission, Speak can understand more than sound — who is present, whether someone entered, ambient temperature, noise level, connected-device status, environmental conditions.</p>
+      <p class="lead">That means these become meaningful requests without specifying devices:</p>
+      <div class="quotes left">
+        <span class="quote">“Turn it down.”</span>
+        <span class="quote">“It's too bright.”</span>
+        <span class="quote">“What's making that noise?”</span>
+        <span class="quote">“Is something burning?”</span>
+        <span class="quote">“Why is it so hot upstairs?”</span>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="kicker">Space</div>
+      <h2>Know which room you're talking about.</h2>
+      <p class="lead"><em class="serif">“Turn the lights off.”</em> You shouldn't need to say <em class="serif">“Turn the dining-room ceiling lights off.”</em></p>
+      <p class="lead">Speak knows where the request originated and what you're probably referring to. <strong>Language becomes spatial.</strong></p>
+      <div class="dialogue">
+        <div class="you">“Where are my keys?”</div>
+        <div class="speak">You left them on the entry table.</div>
+        <div class="you">“What about my glasses?”</div>
+        <div class="speak">They were last seen upstairs near the bed.</div>
+      </div>
+      <p class="lead" style="margin-top:28px">Connected tags, devices, cameras where permitted, and household memory can work together.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">Listening</div>
+      <h2>Recognize sounds.</h2>
+      <p class="lead">Speak can identify important household sounds.</p>
+      <div class="wordlist">
+        <span>Breaking glass</span>
+        <span>Smoke alarms</span>
+        <span>Water running unexpectedly</span>
+        <span>A crying baby</span>
+        <span>A barking dog</span>
+        <span>An appliance alarm</span>
+        <span>A doorbell</span>
+        <span>A possible leak</span>
+      </div>
+      <p class="lead" style="margin-top:32px"><strong>You choose which sounds matter and what Speak should do when it hears them.</strong></p>
+    </div>
+    <div class="reveal">
+      <div class="kicker">Anticipation</div>
+      <h2>Help before you ask.</h2>
+      <p class="lead">Speak can notice when information becomes useful.</p>
+      <div class="dialogue" style="margin-top:24px">
+        <div class="speak">You're getting ready to leave — the highway is backed up. Leaving now through Route 30 saves about twelve minutes.</div>
+        <div class="speak">The oven is preheated.</div>
+        <div class="speak">Your passport isn't with the things you've packed.</div>
+        <div class="speak">The garage is still open.</div>
+      </div>
+      <p class="lead" style="margin-top:28px"><strong>Proactive doesn't mean intrusive.</strong> You control how often Speak speaks first.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split reverse">
+    <div class="reveal">
+      <div class="kicker">Judgment</div>
+      <h2>A different kind of notification.</h2>
+      <p class="lead">Phones turned everything into notifications. <strong>Speak can turn notifications back into judgment.</strong></p>
+      <p class="lead">Twenty-seven alerts might become:</p>
+    </div>
+    <div class="reveal">
+      <div class="dialogue" style="margin-top:0">
+        <div class="speak">Nothing urgent. There are three things you'll probably want to look at later.</div>
+        <div class="speak">One thing needs you now.</div>
+      </div>
+      <div class="dialogue" style="margin-top:40px">
+        <div class="you">“What was that thing you told me this morning?”</div>
+        <div class="speak">The school delayed opening because of weather.</div>
+        <div class="you">“No, after that.”</div>
+        <div class="speak">The plumber moved the appointment.</div>
+        <div class="you">“That's it.”</div>
+      </div>
+      <p class="lead" style="margin-top:28px"><strong>Conversation becomes navigable.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">Your world</div>
+      <h2>Ask about your own life.</h2>
+      <p class="lead">Traditional AI knows the world. Speak can also understand the parts of your world you've chosen to connect.</p>
+      <div class="quotes left">
+        <span class="quote">“When did we replace the water heater?”</span>
+        <span class="quote">“How much did we pay?”</span>
+        <span class="quote">“Who did it?”</span>
+        <span class="quote">“Is it still under warranty?”</span>
+        <span class="quote">“What did they say about maintenance?”</span>
+      </div>
+      <p class="lead" style="margin-top:32px">The answers can come from receipts, email, documents, calendars, conversations and household memory.</p>
+    </div>
+    <div class="reveal">
+      <div class="kicker">People, not records</div>
+      <h2>Understand relationships.</h2>
+      <div class="quotes left" style="margin-top:0">
+        <span class="quote">“Invite my brother.”</span>
+        <span class="quote">“Send that to Dad.”</span>
+        <span class="quote">“Ask our neighbor if she wants one.”</span>
+      </div>
+      <p class="lead" style="margin-top:32px">Speak understands people as people, not contact records. And it knows that <strong>“Mom” means something different depending on who's speaking.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Privacy ═══ -->
+<section class="section" id="privacy">
+  <div class="container center reveal">
+    <div class="kicker">Privacy</div>
+    <h2 style="margin-inline:auto">Personal without becoming communal.</h2>
+    <p class="lead"><strong>Shared hardware doesn't mean shared data.</strong> Ask: <em class="serif">“What did I talk about with ChatGPT earlier?”</em> Speak knows whether that conversation belongs in the room.</p>
+    <p class="lead">For sensitive information: <em class="serif">“I can answer that privately on your phone.”</em> The physical environment becomes part of the privacy model.</p>
+  </div>
+  <div class="container">
+    <div class="grid" style="max-width:1000px; margin-left:auto; margin-right:auto">
+      <div class="card reveal">
+        <h3>Whisper.</h3>
+        <p>You can talk quietly. Speak can answer quietly. At night:</p>
+        <span class="q">“What time is it?”</span>
+        <span class="q dim">“2:14.”</span>
+        <p style="margin-top:14px">No glowing screen. No waking everyone up.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Private mode.</h3>
+        <p><strong>Touch and hold.</strong> The microphones physically disconnect. The light changes. Everyone in the room can see that Speak isn't listening.</p>
+        <p style="margin-top:14px">Privacy shouldn't require trusting an icon buried in settings. <strong>It should be visible.</strong></p>
+      </div>
+      <div class="card reveal">
+        <h3>Talk privately.</h3>
+        <span class="q">“Send this to my phone.”</span>
+        <p style="margin-top:14px">A conversation can seamlessly move from the room to a personal device. Sensitive subjects don't need to be spoken aloud just because the interaction began with Speak.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Language ═══ -->
+<section class="section soft">
+  <div class="container">
+    <div class="grid">
+      <div class="card reveal">
+        <h3>Translate conversations.</h3>
+        <span class="q">“Translate between me and Maria.”</span>
+        <p style="margin-top:14px">Speak can become a natural interpreter. Each person speaks normally. Speak preserves meaning, tone and context instead of translating isolated sentences.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Learn a language by living with it.</h3>
+        <span class="q">“Only answer me in Spanish during breakfast.”</span>
+        <p style="margin-top:14px">Speak can gently correct mistakes, introduce vocabulary, remember what you're learning, and adjust difficulty over time. Language learning becomes part of everyday life.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Practice anything.</h3>
+        <span class="q">“Interview me.”</span>
+        <span class="q">“Run through my presentation.”</span>
+        <span class="q">“Quiz me.”</span>
+        <span class="q">“Pretend you're the customer.”</span>
+        <span class="q">“Challenge my argument.”</span>
+        <span class="q">“Don't let me use filler words.”</span>
+        <p style="margin-top:14px">Speak turns an empty room into a practice environment.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Settle arguments.</h3>
+        <span class="q">“What movie was that?”</span>
+        <span class="q">“How far is the moon?”</span>
+        <span class="q">“Was that actually illegal?”</span>
+        <span class="q">“Who played first base?”</span>
+        <span class="q">“What temperature should chicken be?”</span>
+        <p style="margin-top:14px">The world's most overqualified dinner-table referee is sitting six feet away. But it can also say <em>“I don't know.”</em> Speak distinguishes between what it knows, what it remembers, what it can verify, and what it's uncertain about. Ask it to check — it can research the question and come back with sources.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ One intelligence ═══ -->
+<section class="section">
+  <div class="container center reveal">
+    <div class="kicker">One presence</div>
+    <h2 style="margin-inline:auto">One intelligence. Every room.</h2>
+    <p class="lead">Multiple Speak devices don't behave like separate assistants. <strong>They form a single presence.</strong> Start a conversation in the kitchen. Continue in the hallway. Finish upstairs. Your context follows you.</p>
+    <p class="lead"><strong>The hardware disappears. The intelligence remains.</strong></p>
+  </div>
+</section>
+
+<section class="section tight soft">
+  <div class="container">
+    <div class="grid">
+      <div class="card reveal">
+        <h3>Speak understands interruption.</h3>
+        <span class="q">“Remind me to—”</span>
+        <span class="q">“Dad!”</span>
+        <span class="q">“Hang on.”</span>
+        <p style="margin-top:14px">Twenty seconds later:</p>
+        <span class="q">“What was I saying?”</span>
+        <span class="q dim">“You were asking me to remind you about something.”</span>
+        <span class="q">“Oh yeah. Call Mark tomorrow.”</span>
+        <p style="margin-top:14px"><strong>Human conversation is messy. Speak is designed for that.</strong></p>
+      </div>
+      <div class="card reveal">
+        <h3>It understands “that.”</h3>
+        <span class="q">“Order that again.”</span>
+        <span class="q">“Play that song.”</span>
+        <span class="q">“Send that to Sarah.”</span>
+        <span class="q">“Put that on my calendar.”</span>
+        <span class="q">“Remember that.”</span>
+        <p style="margin-top:14px">The most powerful interface might be pronouns. <strong>Because context makes them work.</strong></p>
+      </div>
+      <div class="card reveal">
+        <h3>It understands “later.”</h3>
+        <span class="q">“Remind me later.”</span>
+        <p style="margin-top:14px">Speak can reason about what later means. If you're driving, later might mean when you arrive. If you're cooking, later might mean after dinner. If something has a deadline, Speak can make sure <strong>“later” doesn't become “forgotten.”</strong></p>
+      </div>
+      <div class="card reveal">
+        <h3>It understands intent.</h3>
+        <span class="q">“I'm exhausted.”</span>
+        <p style="margin-top:14px">That doesn't automatically trigger an action. Maybe Speak says:</p>
+        <span class="q dim">“You've got nothing else scheduled tonight.”</span>
+        <p style="margin-top:14px">Or perhaps:</p>
+        <span class="q dim">“Want me to move your morning workout?”</span>
+        <p style="margin-top:14px"><strong>Intelligence means understanding when a statement is just a statement.</strong></p>
+      </div>
+      <div class="card reveal">
+        <h3>It can disagree.</h3>
+        <span class="q">“Should I buy this?”</span>
+        <p style="margin-top:14px">Speak doesn't have to validate the idea.</p>
+        <span class="q dim">“You've looked at three versions of that camera, but based on how you actually use your current one, I don't think the upgrade gives you much.”</span>
+        <p style="margin-top:14px"><strong>A useful assistant shouldn't always say yes.</strong></p>
+      </div>
+      <div class="card reveal">
+        <h3>Ask it to challenge you.</h3>
+        <span class="q">“Tell me why this is a bad idea.”</span>
+        <span class="q">“Argue the other side.”</span>
+        <span class="q">“What am I missing?”</span>
+        <span class="q">“What assumptions am I making?”</span>
+        <span class="q">“Would you spend the money?”</span>
+        <p style="margin-top:14px">Speak can become friction when friction is useful.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Away & home memory ═══ -->
+<section class="section">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">Away</div>
+      <h2>Let it run the house while you're away.</h2>
+      <p class="lead"><em class="serif">“We're leaving for a week.”</em> Speak can activate an away routine — adjust climate, manage lights, watch supported sensors, pause unnecessary routines, handle deliveries, coordinate pet care, and notify you only when something actually needs attention.</p>
+    </div>
+    <div class="reveal">
+      <div class="kicker">Return</div>
+      <h2>Come home to a house that's ready.</h2>
+      <p class="lead"><em class="serif">“We land at six.”</em> Speak can coordinate the home around your arrival. Temperature returns to normal. Lights come on if it's dark. Groceries can arrive. The robot vacuum finishes before you get home.</p>
+      <p class="lead"><strong>Your evening doesn't begin with resetting the house.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container split">
+    <div class="reveal">
+      <div class="kicker">Continuity</div>
+      <h2>Give your home a memory.</h2>
+      <p class="lead">Most homes forget everything. Speak doesn't have to.</p>
+      <div class="wordlist">
+        <span>Repairs</span><span>Purchases</span><span>Renovations</span><span>Instructions</span>
+        <span>Warranties</span><span>Paint colors</span><span>Measurements</span><span>Appliance models</span>
+        <span>Contractors</span><span>Receipts</span><span>Maintenance</span>
+      </div>
+      <div class="quotes left" style="margin-top:32px">
+        <span class="quote">“What's the model number of the dishwasher?”</span>
+        <span class="quote">“Do we still have the receipt?”</span>
+        <span class="quote">“When should the HVAC be serviced again?”</span>
+      </div>
+      <p class="lead" style="margin-top:32px"><strong>Your home becomes searchable.</strong></p>
+    </div>
+    <div class="reveal">
+      <div class="kicker">When you move</div>
+      <h2>Years of knowledge, transferable.</h2>
+      <div class="dialogue" style="margin-top:0">
+        <div class="you">“Prepare the house information for the buyers.”</div>
+        <div class="speak">Speak can assemble manuals, improvements, service history, warranties, paint colors, smart-home instructions and maintenance records.</div>
+      </div>
+      <p class="lead" style="margin-top:32px">Years of household knowledge become transferable instead of disappearing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Design ═══ -->
+<section class="section" id="design">
+  <div class="container center reveal">
+    <div class="kicker">Design</div>
+    <h2 style="margin-inline:auto">The ring tells you what's happening.</h2>
+    <p class="lead">Speak communicates visually without demanding attention.</p>
+    <div class="ring-divider" style="padding:44px 0 8px"><div class="ring" style="width:100px;height:100px"></div></div>
+  </div>
+  <div class="container">
+    <div class="grid" style="max-width:1000px; margin-left:auto; margin-right:auto">
+      <div class="card reveal">
+        <h3>A soft glow</h3>
+        <p>means it's listening.</p>
+      </div>
+      <div class="card reveal">
+        <h3>A moving light</h3>
+        <p>means it's working.</p>
+      </div>
+      <div class="card reveal">
+        <h3>A pulse</h3>
+        <p>means something is waiting.</p>
+      </div>
+      <div class="card reveal">
+        <h3>A private indicator</h3>
+        <p>shows microphones are physically disconnected.</p>
+      </div>
+    </div>
+    <p class="lead center" style="margin:44px auto 0"><strong>You can understand Speak's state from across the room. No screen required.</strong></p>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="container center reveal">
+    <h2 style="margin-inline:auto">Tap to join.</h2>
+    <p class="lead">Sometimes you don't want to say anything.</p>
+    <div class="pairs" style="max-width:900px; margin-left:auto; margin-right:auto">
+      <div class="pair reveal">
+        <div class="yes">Tap Speak</div>
+        <div class="yes-q">It enters the conversation.</div>
+      </div>
+      <div class="pair reveal">
+        <div class="yes">Tap again</div>
+        <div class="yes-q">It waits.</div>
+      </div>
+      <div class="pair reveal">
+        <div class="yes">Cover it</div>
+        <div class="yes-q">Privacy.</div>
+      </div>
+      <div class="pair reveal">
+        <div class="yes">Turn the ring</div>
+        <div class="yes-q">Volume.</div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:44px">Physical controls remain understandable even when the intelligence behind them becomes extraordinarily capable.</p>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="container center reveal">
+    <div class="kicker">Philosophy</div>
+    <h2 style="margin-inline:auto">Ask less.</h2>
+    <p class="lead">The evolution of computing has mostly required humans to learn how computers want to be used. <strong>Speak reverses that relationship.</strong></p>
+    <p class="lead">You shouldn't have to know which application controls the thermostat. Which calendar contains the appointment. Which store sold the product. Where the receipt lives. Which streaming service has the movie. Which person sent the message.</p>
+    <p class="lead"><strong>You tell Speak what you're trying to accomplish. It figures out the rest.</strong></p>
+  </div>
+</section>
+
+<!-- ═══ Things people say ═══ -->
+<section class="section">
+  <div class="container center reveal">
+    <div class="kicker">In real homes</div>
+    <h2 style="margin-inline:auto">Things people say to Speak</h2>
+    <div class="wall">
+      <span class="quote">“What's going on today?”</span>
+      <span class="quote">“Handle it.”</span>
+      <span class="quote">“Find a better one.”</span>
+      <span class="quote">“Where did I put that?”</span>
+      <span class="quote">“Did anyone respond?”</span>
+      <span class="quote">“Order what we usually get.”</span>
+      <span class="quote">“Explain that.”</span>
+      <span class="quote">“Keep going.”</span>
+      <span class="quote">“Remember this.”</span>
+      <span class="quote">“Don't let me forget.”</span>
+      <span class="quote">“Tell everyone.”</span>
+      <span class="quote">“Figure it out.”</span>
+      <span class="quote">“Check first.”</span>
+      <span class="quote">“Only tell me if it matters.”</span>
+      <span class="quote">“Make the house comfortable.”</span>
+      <span class="quote">“Get everything ready.”</span>
+      <span class="quote">“What am I forgetting?”</span>
+      <span class="quote">“What do you think?”</span>
+      <span class="quote highlight">“Thanks.”</span>
+    </div>
+    <p class="lead" style="margin-top:52px">And perhaps the most important: <em class="serif">“Thanks.”</em> Not because Speak needs it. Because eventually, talking to intelligence starts feeling less like operating a computer and more like sharing a space with one.</p>
+  </div>
+</section>
+
+<!-- ═══ Closing ═══ -->
+<section class="closing">
+  <img src="assets/hero.jpg" alt="" aria-hidden="true">
+  <div class="closing-content reveal">
+    <div class="kicker">ChatGPT Speak</div>
+    <h2>Don't open AI.<br><span class="live">Live with it.</span></h2>
+  </div>
+</section>
+
+<footer>
+  <a class="nav-brand" href="#top">ChatGPT <em>Speak</em></a>
+  <div>Intelligence that lives with you.</div>
+  <div>© 2026 ChatGPTSpeak.com</div>
+</footer>
 
 <script>
 (function () {
-  const app = document.getElementById('app');
-  const sidebar = document.getElementById('sidebar');
-  const backdrop = document.getElementById('backdrop');
-  const openBtn = document.getElementById('openSidebarBtn');
-  const closeBtn = document.getElementById('closeSidebarBtn');
-  const newChatBtn = document.getElementById('newChatBtn');
-  const chatList = document.getElementById('chatList');
-  const chatContainer = document.getElementById('chatContainer');
-  const welcome = document.getElementById('welcome');
-  const messages = document.getElementById('messages');
-  const messagesInner = document.getElementById('messagesInner');
-  const form = document.getElementById('composerForm');
-  const input = document.getElementById('composerInput');
-  const sendBtn = document.getElementById('sendBtn');
-  const composerWrap = form.parentElement;
+  // Nav background on scroll
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 24);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-  const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+  // Mobile menu
+  const toggle = document.getElementById('navToggle');
+  const tabs = document.getElementById('navTabs');
+  toggle.addEventListener('click', () => {
+    const open = tabs.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+  tabs.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+      tabs.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
 
-  // ── Sidebar toggle ──
-  function openSidebar() {
-    if (isMobile()) sidebar.classList.add('mobile-open');
-    else sidebar.classList.remove('collapsed');
-    app.classList.remove('sidebar-hidden');
-  }
-  function closeSidebar() {
-    if (isMobile()) sidebar.classList.remove('mobile-open');
-    else sidebar.classList.add('collapsed');
-    app.classList.add('sidebar-hidden');
-  }
-  openBtn.addEventListener('click', openSidebar);
-  closeBtn.addEventListener('click', closeSidebar);
-  backdrop.addEventListener('click', closeSidebar);
-
-  // ── Chat state ──
-  let chats = [];
-  let currentChat = null;
-
-  function newChat() {
-    currentChat = { id: Date.now(), title: null, messages: [] };
-    chats.unshift(currentChat);
-    renderChatList();
-    renderMessages();
-    if (isMobile()) closeSidebar();
-    input.focus();
-  }
-
-  function renderChatList() {
-    chatList.innerHTML = '';
-    chats.filter(c => c.messages.length).forEach(chat => {
-      const btn = document.createElement('button');
-      btn.className = 'chat-list-item' + (chat === currentChat ? ' active' : '');
-      btn.textContent = chat.title || 'New chat';
-      btn.addEventListener('click', () => {
-        currentChat = chat;
-        renderChatList();
-        renderMessages();
-        if (isMobile()) closeSidebar();
-      });
-      chatList.appendChild(btn);
+  // Scrollspy for tabs
+  const links = Array.from(tabs.querySelectorAll('a'));
+  const sections = links
+    .map(a => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id));
+      }
     });
-  }
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => spy.observe(s));
 
-  function renderMessages() {
-    messagesInner.innerHTML = '';
-    const hasMessages = currentChat && currentChat.messages.length > 0;
-    if (hasMessages) {
-      chatContainer.classList.add('chatting');
-      welcome.style.display = 'none';
-      messages.style.display = 'block';
-      chatContainer.insertBefore(messages, chatContainer.firstChild);
-      chatContainer.insertBefore(composerWrap, document.getElementById('chatContainer').querySelector('.disclaimer'));
-      currentChat.messages.forEach(m => appendBubble(m.role, m.text));
-      scrollToBottom();
-    } else {
-      chatContainer.classList.remove('chatting');
-      messages.style.display = 'none';
-      welcome.style.display = 'flex';
-      welcome.appendChild(composerWrap);
-    }
-  }
-
-  function appendBubble(role, text) {
-    const row = document.createElement('div');
-    row.className = 'msg ' + role;
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    bubble.textContent = text;
-    row.appendChild(bubble);
-    messagesInner.appendChild(row);
-    return bubble;
-  }
-
-  function scrollToBottom() {
-    messages.scrollTop = messages.scrollHeight;
-  }
-
-  // ── Composer ──
-  input.addEventListener('input', () => {
-    sendBtn.disabled = input.value.trim().length === 0;
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 200) + 'px';
-  });
-
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      form.requestSubmit();
-    }
-  });
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = input.value.trim();
-    if (!text) return;
-
-    if (!currentChat) newChat();
-    if (!currentChat.title) {
-      currentChat.title = text.length > 34 ? text.slice(0, 34) + '…' : text;
-    }
-
-    currentChat.messages.push({ role: 'user', text });
-    input.value = '';
-    input.style.height = 'auto';
-    sendBtn.disabled = true;
-    renderChatList();
-    renderMessages();
-    respond(currentChat);
-  });
-
-  // Placeholder assistant response until a backend is connected.
-  function respond(chat) {
-    const row = document.createElement('div');
-    row.className = 'msg assistant';
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    const dot = document.createElement('span');
-    dot.className = 'typing';
-    bubble.appendChild(dot);
-    row.appendChild(bubble);
-    messagesInner.appendChild(row);
-    scrollToBottom();
-
-    const reply = "Thanks for trying ChatGPTSpeak! I'm just the interface for now — an AI backend will be connected soon. Stay tuned.";
-    setTimeout(() => {
-      bubble.textContent = '';
-      let i = 0;
-      const timer = setInterval(() => {
-        bubble.textContent = reply.slice(0, ++i);
-        scrollToBottom();
-        if (i >= reply.length) {
-          clearInterval(timer);
-          chat.messages.push({ role: 'assistant', text: reply });
-        }
-      }, 18);
-    }, 700);
-  }
-
-  newChatBtn.addEventListener('click', newChat);
-
-  // Start with a fresh chat
-  newChat();
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
 })();
 </script>
 </body>

@@ -1,21 +1,27 @@
 # ChatGPTSpeak.com
 
-A ChatGPT-style chat interface for Chatgptspeak.com.
+The product website for **ChatGPT Speak** — intelligence that lives with you.
 
 ## Features
 
-- **ChatGPT-like layout** — centered chat box with a "What can I help with?" welcome state that docks to the bottom once a conversation starts
-- **Collapsible left sidebar** — hamburger menu toggles the sidebar with New chat, chat history, and a profile footer
-- **Chat sessions** — start new chats and switch between them from the sidebar
-- **Mobile responsive** — sidebar becomes a slide-in drawer with a backdrop on small screens
-- **Placeholder assistant** — a typing indicator and simulated streaming reply, ready to be swapped for a real AI backend
+- **Full-bleed hero** — edge-to-edge product photography with the navigation tabs integrated over it; the nav gains a blurred glass background on scroll
+- **Integrated top tabs** — Conversation, Memory, Actions, Everyday, Home, Work, Privacy, Design — with scrollspy highlighting and smooth anchor scrolling; collapses to a hamburger menu on mobile
+- **Editorial design system** — dark luxury palette, Fraunces serif display type paired with Inter, amber and glow accents, chat-style dialogue vignettes, quote pills, contrast pairs, and a CSS-drawn device ring with a pulsing light
+- **Complete product narrative** — every section of the launch copy: conversation, household memory, multi-user permissions, actions and agents, kitchen, travel, family, smart home, work, spatial awareness, privacy, language, hardware design, and the closing "Don't open AI. Live with it."
+- **Scroll-reveal animations** — respectful of `prefers-reduced-motion`
+- **Responsive** — from phones to large desktop displays
 
 ## Running
 
-It's a single static page — no build step needed. Open `index.html` in a browser, or serve it:
+A single static page — no build step. Open `index.html` in a browser, or serve it:
 
 ```sh
 python3 -m http.server 8000
 ```
 
 Then visit http://localhost:8000.
+
+## Assets
+
+- `assets/hero.jpg` — web-optimized hero photograph (used by the page)
+- `assets/hero-original.png` — original full-resolution image
