@@ -9,14 +9,24 @@
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<header class="nav light" id="nav">
-  <a class="nav-brand" href="index.html">ChatGPT <em>Speak</em></a>
-  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+<header class="nav" id="nav">
+  <div class="nav-left">
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/>
+      </svg>
+    </button>
+    <a class="nav-brand" href="index.html">ChatGPT <em>Speak</em></a>
+  </div>
+</header>
+<aside class="drawer" id="drawer" aria-label="Site navigation">
+  <button class="drawer-close" id="drawerClose" aria-label="Close menu">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/>
+      <line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/>
     </svg>
   </button>
-  <nav class="nav-tabs" id="navTabs">
+  <div class="drawer-label">ChatGPT Speak</div>
+  <nav class="drawer-nav">
     <a href="index.html" class="active">Overview</a>
     <a href="conversation.html">Conversation</a>
     <a href="memory.html">Memory</a>
@@ -27,18 +37,15 @@
     <a href="privacy.html">Privacy</a>
     <a href="design.html">Design</a>
   </nav>
-</header>
-<section class="product-hero">
-  <div class="hero-grid">
-    <div class="hero-copy">
-      <div class="kicker">ChatGPT Speak</div>
-      <h1>Intelligence<br><span class="nw">that lives with you.</span></h1>
-      <p class="hero-tagline">Just speak.</p>
-      <p class="hero-sub"><strong>ChatGPT Speak isn't a smart speaker.</strong> It's ChatGPT given a place in the physical world. Speak understands conversation, remembers what matters, works across the services you already use, coordinates the devices around you, and can take action on your behalf.</p>
-    </div>
-    <figure class="hero-product">
-      <img src="assets/hero-device.jpg" alt="ChatGPT Speak levitating above its charging base, ring glowing" fetchpriority="high">
-    </figure>
+</aside>
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<section class="hero">
+  <img src="assets/hero-coast.jpg" alt="ChatGPT Speak hovering above its base on a weathered wood table overlooking a coastal sunset" fetchpriority="high">
+  <div class="hero-content">
+    <div class="kicker">ChatGPT Speak</div>
+    <h1>Intelligence<br><span class="nw">that lives with you.</span></h1>
+    <p class="hero-tagline">It hovers &mdash; and turns its camera toward you the moment it knows you're speaking to it.</p>
+    <p class="hero-sub"><strong>ChatGPT Speak isn't a smart speaker.</strong> It's ChatGPT given a place in the physical world. Speak understands conversation, remembers what matters, works across the services you already use, coordinates the devices around you, and can take action on your behalf.</p>
   </div>
   <div class="hero-scroll" aria-hidden="true"></div>
 </section>
