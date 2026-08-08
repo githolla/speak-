@@ -243,12 +243,55 @@
     justify-content: center;
     width: 100%;
     padding: 0 16px;
+    min-height: 0;
   }
-  .welcome h1 {
-    font-size: 28px;
+
+  .hero {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    border-radius: 24px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    flex-shrink: 1;
+    min-height: 0;
+  }
+  .hero img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 45vh;
+    object-fit: cover;
+    object-position: center 60%;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 28px;
+    background: linear-gradient(to top, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0) 70%);
+    color: #fff;
+  }
+  .hero-eyebrow {
+    font-size: 13px;
     font-weight: 600;
-    margin-bottom: 28px;
-    text-align: center;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 6px;
+  }
+  .hero-overlay h1 {
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .hero-tagline {
+    font-size: 15px;
+    opacity: 0.9;
   }
 
   /* ── Input box ───────────────────────────── */
@@ -330,7 +373,9 @@
     .sidebar.mobile-open { margin-left: 0; }
     .sidebar.mobile-open ~ .backdrop { display: block; }
     .topbar .icon-btn.open-sidebar { display: flex; }
-    .welcome h1 { font-size: 22px; }
+    .hero-overlay { padding: 18px; }
+    .hero-overlay h1 { font-size: 22px; }
+    .hero img { aspect-ratio: 4 / 3; }
   }
 </style>
 </head>
@@ -383,9 +428,16 @@
         <div class="messages-inner" id="messagesInner"></div>
       </div>
 
-      <!-- Welcome state: centered heading + centered chat box -->
+      <!-- Welcome state: hero + centered chat box -->
       <div class="welcome" id="welcome">
-        <h1>What can I help with?</h1>
+        <div class="hero">
+          <img src="assets/hero.jpg" alt="The ChatGPTSpeak smart speaker glowing on a dining table in a modern home">
+          <div class="hero-overlay">
+            <div class="hero-eyebrow">ChatGPTSpeak</div>
+            <h1>What can I help with?</h1>
+            <div class="hero-tagline">Speak naturally. Get answers instantly.</div>
+          </div>
+        </div>
         <div class="composer-wrap">
           <form class="composer" id="composerForm">
             <textarea id="composerInput" rows="1" placeholder="Ask anything" aria-label="Message ChatGPTSpeak"></textarea>
