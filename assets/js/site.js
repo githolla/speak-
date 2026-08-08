@@ -27,6 +27,36 @@
     if (e.target.tagName === 'A') setOpen(false);
   });
 
+  // Newsletter signup forms
+  document.querySelectorAll('[data-news-form]').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var input = form.querySelector('input[type="email"]');
+      var msg = form.parentElement.querySelector('.news-msg');
+      var btn = form.querySelector('button');
+      btn.disabled = true;
+      if (msg) msg.textContent = 'Signing you up…';
+      fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: input.value })
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (res.ok) {
+            if (msg) msg.textContent = "Thanks — you're on the list.";
+            input.value = '';
+          } else if (msg) {
+            msg.textContent = res.d.error || 'Something went wrong — please try again.';
+          }
+        })
+        .catch(function () {
+          if (msg) msg.textContent = 'Network error — please try again.';
+        })
+        .finally(function () { btn.disabled = false; });
+    });
+  });
+
   var reveals = document.querySelectorAll('.reveal');
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
